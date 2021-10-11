@@ -1,0 +1,793 @@
+//MAIN			
+//	
+//INT MAIN()
+START,		CLA			//	
+		STA	ERROR_FLAG	//	ERROR_FLAG = 0
+		STA	ERROR_FLAG2	//	ERROR_FLAF2 = 0
+		STA	ERROR_FLAG3	//	ERROR_FLAG3 = 0
+		STA	CURR_PTR	//	CURR_PTR = 0
+		STA	CURR_PTR2	//	CURR_PTR2 = 0
+		LDA	PTR_STR1	//	
+		BSA	PRINTF		//	PRINTF("NUM OP NUM")
+		LDA	LINE_PTR	//	
+		BSA	ECHO		//	
+		LDA	LINE_PTR	//	
+		BSA	GET_NUM		//	NUM1=GET_NUM(CURR_PTR)
+ERROR_FLAG,	HEX	0		//	
+CURR_PTR,	HEX	0		//	
+		STA	NUM1		//	
+		LDA	ERROR_FLAG	//	IF (ERROR_FLAG == 1)
+		SZA			//	
+		BUN	START		//	GOTO START
+		LDA	CURR_PTR I	//	OPERANT = LINE_PTR[CURR_PTR];
+		STA	OPERANT		//	
+		LDA	CURR_PTR	//	
+		INC			//	
+		STA	CURR_PTR	//	CURR_PTR++
+		BSA	GET_NUM		//	NUM2 = GET_NUM(CURR_PTR)
+ERROR_FLAG2,	HEX	0		//	
+CURR_PTR2,	HEX	0		//	
+		STA	NUM2		//	
+		LDA	ERROR_FLAG2	//	IF (ERROR_FLAG2 == 1)
+		SZA			//	GOTO START
+		BUN	START		//
+	
+	
+				//CHECK INPUTS
+PLUS,		LDA	OPERANT		//	
+		ADD	PLUS_CHECK	//	
+		SZA			//	IF (OPERANT == '+')
+		BUN	MINOS		//	ELSE GOTO MINOS_CHECK
+		LDA	NUM1		//	
+		STA	X		//	
+		LDA	NUM2		//	
+		BSA	ADD_FUNC	//	THEN RES3 = ADD_FUNC(NUM1, NUM2)
+X,		HEX	0		//	
+		STA	RES3		//
+		LDA	RES3		//
+		BSA	PRINT_NUM	//	PRINT_NUM(RES3)
+		BUN	START		//	GOTO START								<==
+MINOS,		LDA	OPERANT		//	
+		ADD	MINUS_CHECK2	//	
+		SZA			//	IF (OPERANT == '-')
+		BUN	MULTIPLY	//	ELSE GOTO MULTIPLY
+		LDA	NUM2		//	
+		STA	Y		//	
+		LDA	NUM1		//	
+		BSA	MINOS_FUNC	//	THEN RES3 = MINOS_FUNC(NUM2, NUM1)
+Y,		HEX	0		//	
+		STA	RES3		//	FI
+		LDA	RES3		//	
+		BSA	PRINT_NUM	//	PRINT_NUM(RES3)
+		BUN	START		//	GOTO START
+MULTIPLY,	LDA	OPERANT		//	
+		ADD	MULT_CHECK	//	
+		SZA			//	IF (OPERANT == '*')
+		BUN	DEVIDE		//	ELSE GOTO DEVIDE
+		LDA	NUM2		//	
+ 
+		STA	Z		//	/*Z = NUM2*/
+		LDA	NUM1		//	
+		BSA	MULT_FUNC	//	THEN RES3 = MULT_FUNC(NUM2, NUM1)
+Z,		HEX	0		//	
+		STA	RES3		//	FI
+		LDA	RES3		//	
+		BSA	PRINT_NUM	//	PRINT_NUM(RES3)
+		BUN	START		//	GOTO START
+DEVIDE,		LDA	OPERANT		//	
+		ADD	DEV_CHECK	//	
+		SZA			//	IF (OPERANT == '/')
+		BUN	DEFAULT		//	ELSE GOTO DEFAULT
+		LDA	NUM2		//	
+		STA	W		//	/*W = NUM2*/
+		LDA	NUM1		//	
+		BSA	DEV_FUNC	//	THEN RES3 = DEV_FUNC(NUM2, NUM1)
+W,		HEX	0		//	FI
+ERROR_FLAG3,	HEX	0		//	
+		STA	RES3		//	
+		LDA	ERROR_FLAG3	//	
+		SZA			//	IF (ERROR_FLAG3 == 1)
+		BUN	START		//	THEN GOTO start	//means that the user
+		LDA	RES3		//	//tried to divide by 0
+		BSA	PRINT_NUM	//	ELSE PRINT_NUM(RES3)
+		LDA	PTR_REM I	//
+		OUT			//
+		LDA	REMINDER	//
+		ADD	ASCII_OFFSET	//	PRINT REMINDER
+		OUT			//
+		LDA	PTR_REM2 I	//
+		OUT			//
+		BUN	START		//	GOTO START
+DEFAULT,	HLT			//	FI
+		BSA	PRINT_NUM	//	
+		HLT			//	
+
+
+
+//MAIN DATA	
+LINE_FEED,	DEC	10		//	/N
+RES3,		DEC	0		//	RESULT
+NUM1,		DEC	0		//	FIRST NUMBER
+NUM2,		DEC	0		//	SECOND NUMBER
+OPERANT,	DEC	0		//	OPERAND
+PLUS_CHECK,	DEC	-43		//	'+'
+MINUS_CHECK2,	DEC	-45		//	'-'
+MULT_CHECK,	DEC	-42		//	'*'
+DEV_CHECK,	DEC	-47		//	'/'
+TMP_PTR,	HEX	0		
+PTR_STR1,	HEX	200		
+PTR_REM,	HEX	250
+PTR_REM2,	HEX	260
+	ORG	200		
+START_STR,	DEC	69		//	e
+		DEC	110		//	n
+		DEC	116		//	t
+		DEC	101		//	e
+		DEC	114		//	r
+		DEC	32		//	
+		DEC	110		//	n
+		DEC	117		//	u
+		DEC	109		//	m
+		DEC	127		//	~
+		DEC	111		//	o
+		DEC	112		//	p
+		DEC	127		//	~
+		DEC	110		//	n
+		DEC	117		//	u
+		DEC	109		//	m	
+		DEC	10		//	'/n'	
+		DEC	62		//	>
+		DEC	33		//	'!' END OF STR "!"
+
+	ORG	250
+PTR_REM1,	DEC	123		//	{
+		DEC	33		//	!
+
+	ORG	260
+PTR_REM3,	DEC	125		//	}
+		DEC	33		//	!
+		
+
+
+LINE_PTR,	HEX	300		//POINTER TO START OF LINE
+		ORG	300		
+LINE,		HEX	0		//	ARRAY FOR INPUTS
+		HEX	0		
+		HEX	0		
+		HEX	0		
+		HEX	0		
+		HEX	0		
+		HEX	0		
+		HEX	0		
+		HEX	0		
+		HEX	0		
+		HEX	0		
+		HEX	0		
+		HEX	0		
+		HEX	0		
+		HEX	0		
+		HEX	0		
+		HEX	0		
+		HEX	0		
+		HEX	0		
+		HEX	0		
+		HEX	0		
+		HEX	0		//	 END OF MAIN
+ 
+//PRINTF(str)				//	PRINTF_FUN
+PRINTF,		HEX	0 
+		STA	PTR
+		LDA	LINE_FEED
+		BSA	OUT_CHAR	//   PRINTF(“’/N’)
+
+WHILE,		LDA	PTR I		//	WHILE (PTR[i] != '!')
+		ADD	END_CHAR	//	
+		SZA			//	
+		BUN	DO		//
+		BUN	END		//
+DO,		LDA	PTR I		//
+		ISZ	PTR		//	PRINTF(“%C”, PTR[i])
+OUT_LOOP1,	SKO			//	PTR++
+		BUN	OUT_LOOP1 	//
+		OUT			//
+		BUN	WHILE		//
+END,		BUN	PRINTF I	//
+
+					
+
+//PRINTF DATA
+PTR,		HEX	0
+END_CHAR,	DEC	-33		//
+
+
+//						//ECHO FUNCTION					
+ECHO,		HEX	0		//	
+		STA	ECHO_PTR	//	
+Repeat,		CLA			//	
+Char_in,	SKI			//	
+		BUN	Char_in		//	
+		INP			//	
+		STA	TmpChar		//
+		LDA	CReturn		//	
+		CMA			//	
+		INC			//	
+		ADD	TmpChar		//	
+		SZA			//	WHILE(INPUT!= CR)
+		BUN	Char_out	//		
+		BUN	RETURN		//
+	
+Char_out,	LDA	FLAG_9		//
+		SPA			//	if(flag==0) means no chars printed so far
+		BUN	CONTINUE_1	//	
+		LDA	TmpChar		//	
+		ADD	BACK_SPACE	//	IF(tmpchar== backspace)&& flag=0
+		SZA			//	 	printf(error_msg)
+		BUN	CONTINUE_1	//	
+		LDA	ECHO_PTR	//
+		ADD	MINUS1		//	
+		STA	ECHO_PTR	//
+		LDA	TMPCHAR		//
+		BUN	LOOPOUT		//
+CONTINUE_1,	LDA	TMPCHAR		//	CHECK IN UNPUT=BACKSPACE
+		ADD	BACK_SPACE	//
+		SZA			//
+		BUN	CONTINUE_2	//	
+		LDA	DELETE_MSG	//
+		BSA	PRINTF		//
+		BUN	START		//	
+CONTINUE_2,	LDA	TMPCHAR		//		
+		STA	ECHO_PTR I	//	
+		ISZ	ECHO_PTR	//	ECHO_PTR++
+LoopOut,	SKO			//
+		BUN	LoopOut		//	
+		OUT			//	PRINTF (*PTR)
+		LDA	ONE2		//		
+		STA	FLAG_9		//	FLAG=1
+		BUN	Repeat		//	
+RETURN,		LDA	END_CHAR1	//	
+		STA	ECHO_PTR I	//	PTR[END OF LINE] = '/0'
+		BUN	ECHO I		//	
+
+//ECHO DATA 
+ECHO_PTR,	HEX	0		//	
+END_CHAR1,	DEC	33		//	
+CReturn,	HEX	D		//	ASCII for CarriageReturn
+TmpChar,	DEC	0		//	
+BACK_SPACE,	DEC	-8
+FLAG_9,		DEC	0		//
+ONE2,		DEC	1
+
+ 
+		//GET_NUM FUNC			
+
+GET_NUM,	HEX	0		//	
+		STA	TMP		//	TMP = LINE_PTR[i]
+		CLA			//	
+		STA	NUM		//	NUM = 0
+		STA	DIGIT		//	DIGIT = 0
+		STA	MINOS_FLAG	//	MINUS_FLAF = 0
+		LDA	TMP I		//	
+		STA	DIGIT		//	NUM = TMP[0];
+		LDA	MINOS_CHECK	//	
+		CMA			//	
+		INC			//	
+		ADD	DIGIT		//	CHECK IF NUM IS "-"
+		SZA			//	IF (NUM == '-')
+		BUN	WHILE1		//	ELSE GOTO WHILE1
+		LDA	MINOS_FLAG	//	
+		INC			//	
+		STA	MINOS_FLAG	//	THEN MINOS_FLAG++
+		ISZ	TMP		//	TMP++;
+		CLE			//	FI
+WHILE1,		LDA	TMP I		//	
+		ADD	OFFSET		//	
+		SNA			//	WHILE (TMP IS A DIGIT)
+		BUN	DO2		//	
+		BUN	END_1		//	
+DO2,		STA	DIGIT		//	DO
+		CLE			//	DIGIT = TMP[i]
+		LDA	NUM		//	
+		CIL			//	
+		CIL			//	
+		CIL			//	
+		ADD	NUM		//	
+		ADD	NUM		//	
+		ADD	DIGIT		//	
+		STA	NUM		//	NUM = NUM*10 + DIGIT;
+		ADD	RANGE		//	CHECK FOR OVERFLOW
+		SPA			//	IF ( (NUM -RANGE) >= 0 )
+		BUN	CONTINUE5	//	
+		BUN	OVERFLOW	//	
+CONTINUE5,	LDA	NUM		//	ELSE{ TMP++; GOTO WHILE }
+		ISZ	TMP		//	
+		BUN	WHILE1		//	
+OVERFLOW,	LDA	OVER_STR	//	THEN{
+		BSA	PRINTF		//	PRINTF("ERROR, NUM IS TOO BIG!");
+		CLA			//	
+		INC			//	
+		STA	GET_NUM	I	//	ERROR_FLAG = 1 means overflow
+		ISZ	GET_NUM		//	
+		LDA	TMP		//	
+		STA	GET_NUM	I	//	
+		ISZ	GET_NUM		//	
+		LDA	NUM		//	RETURN ERROR }
+		BUN	GET_NUM	I	//	
+END_1,		LDA	MINOS_FLAG	//	
+		SPA			//	IF (MINUS_FLAG == 1)
+		BUN	END_2		//	
+		LDA	NUM		//	
+		CMA			//	
+		INC			//	
+		STA	NUM		//	THEN NUM = NUM*(-1)
+END_2,		ISZ	GET_NUM		//	FI
+		LDA	TMP		//	
+		STA	GET_NUM	I	//	
+		ISZ	GET_NUM		//	
+		LDA	NUM		//	
+ 		BUN	GET_NUM	I	//	RETURN (TMP[i], NUM)
+
+// GET NUM DATA				
+RANGE,		DEC	-32768		//	RANGE CHECK
+DIGIT,		DEC	0		//	CURRENT DIGIT
+NUM,		DEC	0		//	NUMBER
+TMP,		HEX	0		//	
+MINOS_CHECK,	DEC	45		//	ASCII FOR -
+MINOS_FLAG,	DEC	0		//	
+OFFSET,		DEC	-48		//	ASCII FOR "0" (NEGATIVE VALUE)
+DELETE_MSG,	HEX	450		//	if backspace on empty str
+OVER_STR,	HEX	400		//
+		ORG	400		//
+ERROR_STR,	DEC	69		//E	
+		DEC	114		//r	
+		DEC	114		//r	
+		DEC	111		//o	
+		DEC	114		//r	
+		DEC	32		//	
+		DEC	110		//n	
+		DEC	117		//u	
+		DEC	109		//m	
+		DEC	98		//b	
+		DEC	101		//e	
+		DEC	114		//r	
+		DEC	32		//	
+		DEC	105		//i	
+		DEC	115		//s	
+		DEC	32		//	
+		DEC	116		//t	
+		DEC	111		//o	
+		DEC	111		//o	
+		DEC	32		//	
+		DEC	98		//b	
+		DEC	105		//i	
+		DEC	103		//g		
+		DEC	10		//'/n'	
+		DEC	33		//!	my end of str ' /0'
+		ORG 450
+DELETE_MSG1,	DEC	69		//E	
+		DEC	114		//r	
+		DEC	114		//r	
+		DEC	111		//o	
+		DEC	114		//r	
+		//DEC	10		//'/n'	
+		DEC	33		//!	my end of str '/0'
+
+		//PRINT_NUM		
+
+PRINT_NUM,	HEX	0		//
+		STA	RES		//
+		LDA	RES_STR		//
+		BSA	PRINTF		//	PRINTF
+		LDA	Power10ptr	//
+		STA	ptr1		//	PTR1 = POWER10ARRAY[PTR] 
+		LDA	RES		//
+		SNA			//	CHECK IF NUMBER IS NEGATIVE
+		BUN	POSITIVE	//	
+NEGATIVE,	LDA	RES		//
+		CMA			//
+		INC			//
+		STA	STRIPPED	//	ASCII FOR -
+		LDA	SIGN_ASCII	//
+		BSA	OUT_CHAR	//
+		BUN	FOR_LOOP	//
+POSITIVE,	LDA	RES		//
+		STA	STRIPPED	//
+		
+FOR_LOOP,	LDA	COUNT		//	FOR_LOOP
+		SPA			//
+		BUN	END_FOR		//
+		CLA			//
+		STA	DIGIT1		//
+
+LOOP,		LDA	ptr1 I		//	WHILE (STRIPPED - POWER10ARRAY[PTR]>0)
+		ADD	STRIPPED	//	DO
+		SNA			//	
+		BUN	CONTINUE	//	
+		BUN	OUTX		//
+CONTINUE,	STA	STRIPPED	//	Stripped=Stripped - Power10Array[Ptr]
+		ISZ	DIGIT1		//	DIGIT++
+		LDA	ONE_2		//
+		STA	FLAG_2		//
+		BUN	LOOP		//	END
+OUTX,		LDA	FLAG_2		//
+		SPA			//
+		BUN	NOT_PRINT1	//
+		LDA	DIGIT1		//
+		ADD	ASCII_OFFSET	//	
+		BSA	OUT_CHAR	//	
+NOT_PRINT1,	ISZ	PTR1		// 	PTR++
+		LDA	COUNT		//
+		ADD	MINUS1		//
+		STA	COUNT		//	COUNT--
+		BUN	FOR_LOOP	//	FL
+END_FOR,	LDA	STRIPPED	//	
+		ADD	ASCII_OFFSET	//	
+		BSA	OUT_CHAR	//	Output(last digit)
+END1,		CLA			//	
+		STA	ptr1		//	print units – the left over in ACC
+		LDA	C4		//
+		STA	COUNT		//	COUNT=4
+		LDA	MINUS1		//	COUNT--
+		STA	FLAG_2		//
+		BUN	PRINT_NUM I	//	
+
+
+//PRINT_NUM	DATA				
+C4,		DEC	4			
+RES,		HEX	0								
+DIGIT1,		HEX	0			
+FLAG_2,		DEC	-1	
+ONE_2,		DEC	1				
+SIGN_ASCII,	HEX	2D								
+ASCII_OFFSET,	HEX	30								
+STRIPPED,	DEC	0								
+MINUS1,		DEC	-1								
+COUNT,		DEC	4								
+Power10ptr,	HEX	500								
+ptr1,		HEX	0								
+		ORG	500								
+POWER10ARRAY,	DEC	-10000								
+		DEC	-1000								
+		DEC	-100								
+		DEC	-10								
+RES_STR,	HEX	850								
+		ORG	850								
+RES_STRING,	DEC	8		//BACKSPACE
+		DEC	61		//	=												
+		DEC	33		//	!	my end of str char like '/0'
+
+		
+OUT_CHAR,	HEX	0		//PRINT 		
+OUT_LOOP2,	SKO 
+		BUN 	OUT_LOOP2
+		OUT
+		BUN 	OUT_CHAR I
+		
+	//ADD_FUNC			//	
+ADD_FUNC,	HEX	0		//	
+		STA	TMP_PAR		//	TMP_PAR = NUM2
+		CLE			//	E=0				
+		LDA	ADD_FUNC I	//	
+		ADD	TMP_PAR		//
+		STA	TMP_PTR		//	
+		ADD	OVER_NUM1	//
+		SZE			//
+		BUN	OVER_1		//
+		LDA	TMP_PTR		//
+		ISZ	ADD_FUNC	//	
+		BUN	ADD_FUNC I	//	RETURN (TMP_PAR + NUM1)
+OVER_1,		LDA	ERROR_MSG	//
+		BSA	PRINTF		//
+		BUN	START		//
+
+	//ADD_FUNC	DATA					
+ 
+TMP_PAR,	DEC	0
+OVER_NUM1,	DEC	-32767
+ERROR_MSG,	HEX	950		//					
+		ORG 950
+MSG,	DEC	111			//	o
+	DEC	118			//	v
+	DEC	101			//	e
+	DEC	114			//	r
+	DEC	47			//	/
+	DEC	117			//	u
+	DEC	110			//	n
+	DEC	100			//	d
+	DEC	101			//	e
+	DEC	114			//	r
+	DEC	32			//	
+	DEC	102			//	f
+	DEC	108			//	l
+	DEC	111			//	o
+	DEC	119			//	w
+	DEC	33			//	!
+
+
+
+		//MINOS_FUNC				
+MINOS_FUNC,	HEX	0		//
+		STA	TMP_PAR1	//	TMP_PAR1 = NUM1 
+		LDA	MINOS_FUNC I	//
+		CMA			//
+		INC			//	NUM2 = NUM2* -1
+		ADD	TMP_PAR1	// 
+		ISZ	MINOS_FUNC	//
+		BUN	MINOS_FUNC I	//	RETURN ( TMP_PAR1 + (-NUM2) )
+
+		//MINOS_FUNC DATA 
+TMP_PAR1,	DEC 0
+
+
+
+			//MULT_FUNC
+MULT_FUNC,	HEX	0		//	
+		STA	MULTIPLICAND	//	MULTIPLICAND = NUM1
+		LDA	MULT_FUNC I	//		
+		STA	MULTIPLIER	//	MULTIPLIER = NUM2
+		ISZ	MULT_FUNC	//
+
+				// CHECK FOR SIGN	
+		CLE			//
+		CLA			//		
+		STA	SIGN		//	SIGN = 0
+		STA	SIGN1		//	SIGN1 = 0
+		STA	POSITIVE1	//	POSITIVE1 = 0
+		STA	RESULT1		//	RESULT1 = 0
+		STA	DIGIT_COUNT1	//	DIGIT_COUNT1 = 0
+		LDA	INIT_DIGIT	//		
+		STA	DIGITS		//	DIGITS = -16
+		LDA	MULTIPLICAND
+		SZA
+		BUN	DO8
+		BUN	ZERO_RES
+DO8,		LDA	MULTIPLIER
+		SZA
+		BUN	DO7
+		BUN	ZERO_RES
+DO7,		LDA	MULTIPLICAND	//		
+		SPA			//	IF (MULTIPLICAND > 0)
+		BUN	CHECK2		//		
+		LDA	SIGN		//		
+		INC			//		
+		STA	SIGN		//		THEN SIGN = 1  multiplicand is positive
+		BUN	DO4		//		
+CHECK2,		CLA			//		
+		STA	SIGN		//		ELSE {
+		LDA	MULTIPLICAND	//		SIGN = 0  multiplicand is negative
+		CMA			//		
+		INC			//		MULTIPLICAND = MULTIPLICAND*(-1)
+		STA	MULTIPLICAND	//		}
+DO4,		LDA	MULTIPLIER	//	
+		SPA			//	IF	(MULTIPLIER > 0)
+		BUN	CHECK3		//		
+		LDA	SIGN1		//		
+		INC			//		
+		STA	SIGN1		//		THEN SIGN1 = 1 multiplier is positive
+		BUN	CHECK4		//		
+CHECK3,		CLA			//		
+		STA	SIGN1		//		ELSE {
+		LDA	MULTIPLIER	//		SIGN1 = 0 multiplier is negative
+		CMA			//		MULTIPLIER = MULTIPLIER*(-1)
+		INC			//		}
+
+		STA	MULTIPLIER	//	FI	
+CHECK4,		LDA	SIGN1		//		
+		CMA			//		
+		INC			//		
+		ADD	SIGN		//		
+		SZA			//	IF	(SIGN1 == SIGN)
+		BUN	ELSE2		//		
+		CLA			//		
+		INC			//	
+		STA	POSITIVE1	//	THEN POSITIVE1 = 1 means positive result
+		BUN	FOR_LOOP1	//	
+ELSE2,		CLA			//	
+		STA	POSITIVE1	//	ELSE POSITIVE1 = 0 means negative result
+					// 
+// 
+FOR_LOOP1,	LDA	DIGIT_COUNT1	// FOR (DIGIT_COUNT1 = 0; DIGIT_COUNT<16; ++)
+		ADD	DIGITS		//	
+		SZA			//	
+		BUN	BODY		//	
+		BUN	END_LOOP1	//	
+
+BODY,		LDA	MULTIPLIER	//	BINARY MULTIPLICATION
+		CIR			//	
+		STA	MULTIPLIER	//	SKIP IF E==0
+		SZE			//	
+		BUN	THEN1		//	
+		BUN	FI1		//	
+THEN1,		LDA	RESULT1		//	 RESULT+=MULTIPLICAND
+		ADD	MULTIPLICAND	//	
+		STA	RESULT1		//	
+FI1,		LDA	MULTIPLICAND	//	THEN CIL MUTIPLIER
+		CIL			//	
+		STA	MULTIPLICAND	//	
+		ISZ	DIGIT_COUNT1	//	
+		BUN	FOR_LOOP1	//	
+	
+END_LOOP1,	LDA	POSITIVE1	//	
+		SZA			//	IF (POSITIVE1 == 0)
+		BUN	POSITIVE2	//	
+		BUN	NEGATIVE1	//	
+POSITIVE2,	LDA	RESULT1		//
+		SNA			//
+		BUN	MULT_FUNC I	//	RETURN RESULT
+		BUN	OVER_12		//
+NEGATIVE1,	LDA	RESULT1		//	
+		SPA			//
+		BUN	OVER_12		//
+		CMA			//	
+		INC			//	
+		BUN	MULT_FUNC I	//	RETURN -RETSULT
+OVER_12,	LDA	ERROR_MSG	//	OVER/UNDER FLOW MSG
+		BSA	PRINTF		//
+		BUN	START		//
+ZERO_RES,	CLA			//	IF(NUM1 OR NUM2 =ZERO)
+		STA	RESULT1
+		BUN	MULT_FUNC I
+
+//MULT_FUNC DATA			//	
+INIT_DIGIT,	DEC	-16		//	FOR RUNNING OVER 16 BITS NUMBER
+SIGN1,		DEC	0		//		
+SIGN,		DEC	0		//	
+POSITIVE1,	DEC	0		//		
+MULTIPLICAND,	DEC	0		//	
+MULTIPLIER,	DEC	0		//	
+DIGIT_COUNT1,	DEC	0		//	FOR RUNNING OVER A 16 BITS NUMBER
+DIGITS,		DEC	-16		//		
+RESULT1,	DEC	0		//	RESULT
+ 
+
+		//DEV_FUNC				
+DEV_FUNC,	HEX	0		//	
+		STA	VAR1		//	VAR1 = NUM1
+		LDA	DEV_FUNC I	//	
+		STA	VAR2		//	VAR2 = NUM2
+		ISZ	DEV_FUNC	//	
+		CLA			//
+		STA	RESULT2		//	RESULT=0
+		STA	REMINDER	//	REMINDER=0
+		LDA	MINUS16_1	
+		STA	MINUS16
+				//	CHECK FOR SIGN				
+		LDA	VAR2		//	
+		SZA			//	IF (VAR2 == 0)
+		BUN	CONTINUE1	//	
+		BUN	ZERO_ERROR	//	PRINTF(“MATH ERROR”)
+CONTINUE1,	CLE			//	
+		CLA			//	
+		STA	SIGN2		//	SIGN2 = 0
+		STA	SIGN3		//	SIGN3 = 0
+		STA	POSITIVE4	//	POSITIVE4 = 0
+		STA	RESULT2		//	RESULT2 = 0
+		LDA	VAR1		//	
+		SPA			//	IF (VAR1 > 0)
+		BUN	CHECK9		//	
+		LDA	SIGN2		//	
+		INC			//	
+		STA	SIGN2		//	THEN SIGN = 1 VAR1 IS POSITIVE
+		BUN	DO6		//	
+CHECK9,		CLA			//	
+		STA	SIGN2		//	ELSE 	SIGN2 = 0 VAR1 IS NEGATIVE
+		LDA	VAR1		//	VAR1 = VAR1*(-1)
+		CMA			//	
+		INC			//	
+		STA	VAR1		//	
+DO6,		LDA	VAR2		//	
+		SPA			//	IF	(VAR2 > 0)
+		BUN	CHECK8		//	
+		LDA	SIGN3		//	
+		INC			//	
+		STA	SIGN3		//	THEN SIGN3 = 1 VAR2 IS POSITIVE
+		BUN	CHECK7		//	
+CHECK8,		CLA			//	
+		STA	SIGN3		//	ELSE  SIGN3 = 0 VAR2 IS NEGATIVE
+		LDA	VAR2		//	VAR2 = VAR2*(-1)
+		CMA			//	
+		INC			//	
+		STA	VAR2		//						
+CHECK7,		LDA	SIGN3		//	IF (SIGN2 == SIGN3)
+		CMA			//	
+		INC			//	
+		ADD	SIGN2		//	
+		SZA			//	
+		BUN	ELSE6		//	
+		CLA			//	
+		INC			//	
+		STA	POSITIVE4	//	THEN POSITIVE4 = 1  means positive result
+		BUN	FOR_LOOP3	//	
+ELSE6,		CLA			//	
+		STA	POSITIVE4	//	ELSE POSITIVE4 = 0 means negative result
+					//
+					//	BINARY LONG DEVISION BY BITS
+					//
+FOR_LOOP3,	LDA	MINUS16		// 	FOR(INT I=-16 ;I!=0 ;I++)
+		SNA			//
+ 		BUN	POS_CHECK	// 	END OF LOOP
+		LDA	MINUS16		//
+		INC 			//	
+		STA	MINUS16		//	MINUS16++
+		CLE			//
+		LDA	REMINDER	//	CIL REMINBER
+		CIL			//
+		STA	REMINDER	//
+		LDA	RESULT2		//	CIL RESULT
+		CIL			//
+		STA	RESULT2		//
+		LDA	VAR1		//	CIL VAR1
+		CIL			//
+		STA	VAR1		//
+		SZE			// 	
+		BUN	EISONE		//	IF E=1	REMINDER++
+		BUN	CHECK_R		//	IF E=0
+EISONE,		LDA	REMINDER	//
+		INC			//
+		STA	REMINDER	//	
+CHECK_R,	LDA	VAR2		//	CHECK IF REMINDER>= VAR1(DIVIDENT)
+		CMA			//
+		INC			//	
+		ADD	REMINDER	//	
+		SNA			//
+		BUN	FINISH		//
+		BUN	FOR_LOOP3	//
+		
+FINISH,		LDA 	RESULT2		//	THEN RESULT++
+		INC 			//
+		STA	RESULT2		//
+		LDA	VAR2		//	REMINDER=REMINDER - VAR1
+		CMA			//
+		INC			//
+		ADD	REMINDER	//
+		STA	REMINDER	//
+		BUN	FOR_LOOP3	//
+
+					
+POS_CHECK,	LDA	POSITIVE4	//		
+		SZA			//	IF (POSITIVE4 == 0)
+		BUN	POSITIVE5	//		
+		BUN	NEGATIVE2	//		
+POSITIVE5,	ISZ	DEV_FUNC	//		
+		LDA	RESULT2		//		
+		BUN	DEV_FUNC I	//	ELSE RETURN (RESULT2)
+NEGATIVE2,	ISZ	DEV_FUNC	//		
+		LDA	RESULT2		//		
+		CMA			//		
+		INC			//		
+		BUN	DEV_FUNC I	//	THEN RETURN (-RESULT2)
+ZERO_ERROR,	LDA	ZERO_STR	//	
+		BSA	PRINTF		//		
+		CLA			//		
+		INC			//		
+		STA	DEV_FUNC I	//		
+		ISZ	DEV_FUNC	//		
+		BUN	DEV_FUNC I	//		
+
+
+
+
+		//DEV_FUNC DATA	
+REMINDER,	DEC	0		//	REMINDER
+MINUS16,	DEC	-16		//	NUMBER OF BITS FOR LOOP
+MINUS16_1,	DEC	-16		//	
+ONEEE,		DEC	1		//	
+SIGN3,		DEC	0		//		
+SIGN2,		DEC	0		//		
+POSITIVE4,	DEC	0		//	
+VAR1,		DEC	0		//	FIRST NUMBER	
+VAR2,		DEC	0		//	SECOND NUMBER	
+RESULT2,	DEC	0		//	
+ZERO_STR,	HEX	600		//  	CASE OF DIVIDING BY ZERO	
+		ORG	600		//			
+ARRAY4,		DEC	77		//	M		
+		DEC	97		//	A		
+		DEC	116		//	T		
+	DEC	104			//	H		
+	DEC	32			//			
+	DEC	69			//	E		
+	DEC	114			//	R		
+	DEC	114			//	R		
+	DEC	111			//	O		
+	DEC	114			//	R		
+	DEC	32			//			
+	DEC	33			//	!	
